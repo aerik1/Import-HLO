@@ -1,3 +1,6 @@
+//Version 1.00
+//Initial Script for basic character attributes
+
 on("chat:message",function(msg){
 	if(msg.type=="api" && msg.content.indexOf("!importHLO")==0)
 	{
