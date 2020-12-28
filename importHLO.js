@@ -114,11 +114,13 @@ on("chat:message",function(msg){
 				//Import XP
         	var experience = findObjs({type: 'attribute', characterid: character.id, name: 'xp'})[0];
         	if (!experience) {
-        		createObj('attribute', {
-        		    name :"xp", 
-        		    current: herolabData.actors["actor.1"].gameValues.actXPNet,
-        		    characterid: character.id
-        		});
+        	    if (herolabData.actors["actor.1"].gameValues.actXPNet != undefined) {
+            		createObj('attribute', {
+            		    name :"xp", 
+            		    current: herolabData.actors["actor.1"].gameValues.actXPNet,
+            		    characterid: character.id
+            		});
+        	    }
         	};
 			
 			    //Import Background
@@ -198,6 +200,7 @@ on("chat:message",function(msg){
 			for (i=0; i < abilityScores.length; i++) {
 				var ability = findObjs({type: 'attribute', characterid: character.id, name: `${abilityScores[i].name}`})[0];
 				var abilityMod = findObjs({type: 'attribute', characterid: character.id, name: `${abilityScores[i].name}_modifier`})[0];
+				
 				if (!ability) {
 					createObj('attribute', {
 						name: abilityScores[i].name, 
@@ -213,7 +216,7 @@ on("chat:message",function(msg){
 					}
 				};
 			};
-        //End Ability Scores	
+        //End Ability Scores
 			
 		//Import Skills
 			var skills = [];
@@ -260,6 +263,12 @@ on("chat:message",function(msg){
 								current: skills[i].stNet,
 								characterid: character.id
 							})
+						} else {
+						   createObj('attribute', {
+								name: skills[i].name, 
+								current: 0,
+								characterid: character.id
+							}) 
 						}
 							//Ability modifier to skill
 						if (skills[i].stAbScModifier != undefined) {
@@ -311,11 +320,19 @@ on("chat:message",function(msg){
 						characterid: character.id
 						}); 
 						//Total Lore score
-					createObj('attribute', {
-						name: "repeating_lore_" + rowID + "_lore",
-						current: skills[i].stNet,
-						characterid: character.id
-					});
+    				if (skills[i].stNet != undefined) {
+    					createObj('attribute', {
+    						name: "repeating_lore_" + rowID + "_lore",
+    						current: skills[i].stNet,
+    						characterid: character.id
+    					});
+    				} else {
+    				    createObj('attribute', {
+    						name: "repeating_lore_" + rowID + "_lore",
+    						current: 0,
+    						characterid: character.id
+    					});
+    				}	
 							//Base bonus from proficiency: 0, 2, 4, 6, or 8
 					createObj('attribute', {
 						name: "repeating_lore_" + rowID + "_lore_rank",
@@ -361,7 +378,7 @@ on("chat:message",function(msg){
 				    
 				};
 			};
-		//End Skills				
+		//End Skills
 			
 			
 		//Import Saving Throws
@@ -493,6 +510,17 @@ on("chat:message",function(msg){
 			
 			var heritageFilter = toProperCase(herolabData.actors["actor.1"].gameValues.actRace);
 			var classFilter = getAttrByName(character.id, "class");
+			if (classFilter = "Liberator") {
+			    classFilter = "Champion"
+			};
+			
+			if (classFilter = "Paladin") {
+			    classFilter = "Champion"
+			};
+			
+			if (classFilter = "Redeemer") {
+			    classFilter = "Champion"
+			};
 
 			//Get All feats
         	Object.keys(herolabData.actors["actor.1"].items).forEach(function(k){
