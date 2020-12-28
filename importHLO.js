@@ -73,7 +73,7 @@ on("chat:message",function(msg){
     			return sb.join(' ').toString().trim();
     		};
 			
-		//Begin Character Infomation
+				//Begin Character Infomation
                 //Import Character Name
         	var characterName = findObjs({type: 'attribute', characterid: character.id, name: 'character_name'})[0];
         	if (!characterName) {
@@ -491,17 +491,17 @@ on("chat:message",function(msg){
 							 break;
 				};
 				
-				
+				if (variousPoints[i].rvCurrent != undefined) {
 					createObj('attribute', {
 						name: pointsName,
 						current: variousPoints[i].rvCurrent,
 						max: variousPoints[i].rvMax,
 						characterid: character.id
 					})
-
+			    }
 			};
 		//End Hit, Hero, and Focus Points
-		
+			
 		//Import Feats
 			var allFeats = [];
 			var heritageFeats = [];
@@ -843,6 +843,8 @@ on("chat:message",function(msg){
 			};			
 			//End General Feats
 		//End Feats
+        	
+
 		
 		
             sendChat("HLO Import", `Script Complete, check for import errors.`);
