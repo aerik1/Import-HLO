@@ -254,11 +254,13 @@ on("chat:message",function(msg){
 				if (!skills[i].name.includes("Lore")) {
 					if (!skillName) {
 							//Skill Name (i.e., acrobatics) and total bonus
-						createObj('attribute', {
-							name: skills[i].name, 
-							current: skills[i].stNet,
-							characterid: character.id
-						})
+						if (skills[i].stNet != undefined) {
+							createObj('attribute', {
+								name: skills[i].name, 
+								current: skills[i].stNet,
+								characterid: character.id
+							})
+						}
 							//Ability modifier to skill
 						if (skills[i].stAbScModifier != undefined) {
 							createObj('attribute', {
