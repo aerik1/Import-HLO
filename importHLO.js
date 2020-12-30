@@ -72,16 +72,29 @@ on("chat:message",function(msg){
                 };
     			return sb.join(' ').toString().trim();
     		};
+		//End Proper Case function
+		
+		//Object creation function
+		const createAttribute = (name, current) => {
+		  if (current == undefined) {
+			log(`HLO Import: no value found for ${name}, skipping create.`);
+			return;
+		  }
+		  createObj('attribute', {
+			  name : name,
+			  current: current,
+			  characterid: character.id
+		  });
+		};
+		//End function
+		
+		
 			
-				//Begin Character Infomation
+		//Begin Character Infomation
                 //Import Character Name
         	var characterName = findObjs({type: 'attribute', characterid: character.id, name: 'character_name'})[0];
         	if (!characterName) {
-        		createObj('attribute', {
-        		    name :"character_name", 
-        		    current: herolabData.actors["actor.1"].name,
-        		    characterid: character.id
-        		});
+        		createAttribute("character_name", herolabData.actors["actor.1"].name);
         	};   
         	
         	    //Import Class
@@ -93,44 +106,28 @@ on("chat:message",function(msg){
                     }
             
         	if (!classJob) {
-        		createObj('attribute', {
-        		    name :"class", 
-        		    current: toProperCase(value),
-        		    characterid: character.id
-        		});
+				createAttribute("class", toProperCase(value));
         	};
         	
               
                 //Import Level
         	var level = findObjs({type: 'attribute', characterid: character.id, name: 'level'})[0];
         	if (!level) {
-        		createObj('attribute', {
-        		    name :"level", 
-        		    current: herolabData.actors["actor.1"].gameValues.actLevelNet,
-        		    characterid: character.id
-        		});
+				createAttribute("level", herolabData.actors["actor.1"].gameValues.actLevelNet);
         	};
 			
 				//Import XP
         	var experience = findObjs({type: 'attribute', characterid: character.id, name: 'xp'})[0];
         	if (!experience) {
         	    if (herolabData.actors["actor.1"].gameValues.actXPNet != undefined) {
-            		createObj('attribute', {
-            		    name :"xp", 
-            		    current: herolabData.actors["actor.1"].gameValues.actXPNet,
-            		    characterid: character.id
-            		});
+					createAttribute("xp", herolabData.actors["actor.1"].gameValues.actXPNet);
         	    }
         	};
 			
 			    //Import Background
         	var background = findObjs({type: 'attribute', characterid: character.id, name: 'background'})[0];
         	if (!background) {
-        		createObj('attribute', {
-        		    name :"background", 
-        		    current: herolabData.actors["actor.1"].gameValues.actBackgroundText,
-        		    characterid: character.id
-        		});
+				createAttribute("background", herolabData.actors["actor.1"].gameValues.actBackgroundText);
         	};
 			
 
@@ -148,11 +145,7 @@ on("chat:message",function(msg){
 			};
 
         	if (!ancestry) {
-        		createObj('attribute', {
-        		    name :"ancestry_heritage", 
-        		    current: `${heritage}`,
-        		    characterid: character.id
-        		});
+				createAttribute("ancestry_heritage", heritage);
         	};
         	
         	    //Import Deity
@@ -169,21 +162,13 @@ on("chat:message",function(msg){
 			};
 
         	if (!deity) {
-        		createObj('attribute', {
-        		    name :"deity", 
-        		    current: `${deityName}`,
-        		    characterid: character.id
-        		});
+				createAttribute("deity", deityName);
         	};
         	
         	    //Import Alignment
         	var alignment = findObjs({type: 'attribute', characterid: character.id, name: 'alignment'})[0];
         	if (!alignment) {
-        		createObj('attribute', {
-        		    name :"alignment", 
-        		    current: herolabData.actors["actor.1"].gameValues.actAlignment,
-        		    characterid: character.id
-        		});
+				createAttribute("alignment", herolabData.actors["actor.1"].gameValues.actAlignment);
         	};
         //End Character Information
         	
@@ -202,18 +187,10 @@ on("chat:message",function(msg){
 				var abilityMod = findObjs({type: 'attribute', characterid: character.id, name: `${abilityScores[i].name}_modifier`})[0];
 				
 				if (!ability) {
-					createObj('attribute', {
-						name: abilityScores[i].name, 
-						current: abilityScores[i].stNet,
-						characterid: character.id
-					})
+					createAttribute(abilityScores[i].name, abilityScores[i].stNet);
 					if (abilityScores[i].stAbScModifier != undefined) {
-    					createObj('attribute', {
-    						name: `${abilityScores[i].name}_modifier`, 
-    						current: abilityScores[i].stAbScModifier,
-    						characterid: character.id
-    					})
-					}
+						createAttribute(`${abilityScores[i].name}_modifier`, abilityScores[i].stAbScModifier);
+					};
 				};
 			};
         //End Ability Scores
@@ -256,126 +233,48 @@ on("chat:message",function(msg){
 				
 				if (!skills[i].name.includes("Lore")) {
 					if (!skillName) {
-							//Skill Name (i.e., acrobatics) and total bonus
-						if (skills[i].stNet != undefined) {
-							createObj('attribute', {
-								name: skills[i].name, 
-								current: skills[i].stNet,
-								characterid: character.id
-							})
-						} else {
-						   createObj('attribute', {
-								name: skills[i].name, 
-								current: 0,
-								characterid: character.id
-							}) 
-						}
-							//Ability modifier to skill
+						//Skill Name (i.e., acrobatics) and total bonus
+						createAttribute(skills[i].name, skills[i].stNet);
+							
+						//Ability modifier to skill
 						if (skills[i].stAbScModifier != undefined) {
-							createObj('attribute', {
-								name: `${skills[i].name}_ability`, 
-								current: skills[i].stAbScModifier,
-								characterid: character.id
-							})
-						} else {
-							createObj('attribute', {
-								name: `${skills[i].name}_ability`, 
-								current: 0,
-								characterid: character.id
-							})
-						}
-							//Base bonus from proficiency: 0, 2, 4, 6, or 8
-						createObj('attribute', {
-								name: `${skills[i].name}_rank`, 
-								current: nameRank,
-								characterid: character.id
-							})
-							//Proficiency Display: 0, T, E, M, or L 
-						createObj('attribute', {
-								name: `${skills[i].name}_proficiency_display`, 
-								current: nameProfDisplay,
-								characterid: character.id
-							})
-							//Proficiency plus level score
-						if (skills[i].proLevelBonNet != undefined) {	
-							createObj('attribute', {
-									name: `${skills[i].name}_proficiency`, 
-									current: skills[i].proLevelBonNet,
-									characterid: character.id
-								})	
-						} else {
-							createObj('attribute', {
-									name: `${skills[i].name}_proficiency`, 
-									current: 0,
-									characterid: character.id
-							})	
-						}
+							createAttribute(`${skills[i].name}_ability`, skills[i].stAbScModifier);
+						};
+
+						//Base bonus from proficiency: 0, 2, 4, 6, or 8
+						createAttribute(`${skills[i].name}_rank`, nameRank);
+
+						//Proficiency Display: 0, T, E, M, or L 
+					    createAttribute(`${skills[i].name}_proficiency_display`, nameProfDisplay);
+
+						//Proficiency plus level score
+						if (skills[i].proLevelBonNet != undefined) {
+							createAttribute(`${skills[i].name}_proficiency`, skills[i].proLevelBonNet);
+						};
 					}
 				} else {
 					var rowID = generateRowID();
 						//Lore Name
-					createObj('attribute', {
-						name: "repeating_lore_" + rowID + "_lore_name",
-						current: `${skills[i].name.replace(" Lore", "")}`,
-						characterid: character.id
-						}); 
+					createAttribute("repeating_lore_" + rowID + "_lore_name", `${skills[i].name.replace(" Lore", "")}`);
+
 						//Total Lore score
-    				if (skills[i].stNet != undefined) {
-    					createObj('attribute', {
-    						name: "repeating_lore_" + rowID + "_lore",
-    						current: skills[i].stNet,
-    						characterid: character.id
-    					});
-    				} else {
-    				    createObj('attribute', {
-    						name: "repeating_lore_" + rowID + "_lore",
-    						current: 0,
-    						characterid: character.id
-    					});
-    				}	
-							//Base bonus from proficiency: 0, 2, 4, 6, or 8
-					createObj('attribute', {
-						name: "repeating_lore_" + rowID + "_lore_rank",
-						current: nameRank,
-						characterid: character.id
-					}); 
-							//Proficiency Display: 0, T, E, M, or L 
-					createObj('attribute', {
-						name: "repeating_lore_" + rowID + "_lore_proficiency_display", 
-						current: nameProfDisplay,
-						characterid: character.id
-					});
-						
-						//Proficiency plus level score						
-					if (skills[i].proLevelBonNet != undefined) {	
-					createObj('attribute', {
-							name: "repeating_lore_" + rowID + "_lore_proficiency", 
-							current: skills[i].proLevelBonNet,
-							characterid: character.id
-						})	
-					} else {
-					createObj('attribute', {
-							name: "repeating_lore_" + rowID + "_lore_proficiency", 
-							current: 0,
-							characterid: character.id
-						})	
+					createAttribute("repeating_lore_" + rowID + "_lore", skills[i].stNet);	
+
+						//Base bonus from proficiency: 0, 2, 4, 6, or 8
+					createAttribute("repeating_lore_" + rowID + "_lore_rank", nameRank);
+
+						//Proficiency Display: 0, T, E, M, or L 
+					createAttribute("repeating_lore_" + rowID + "_lore_proficiency_display", nameProfDisplay);
+
+						//Proficiency plus level score
+					if (skills[i].proLevelBonNet != undefined) {
+						createAttribute("repeating_lore_" + rowID + "_lore_proficiency", skills[i].proLevelBonNet);
 					};
 						
 						//Ability modifier to skill
 					if (skills[i].stAbScModifier != undefined) {
-						createObj('attribute', {
-							name: "repeating_lore_" + rowID + "_lore_ability", 
-							current: skills[i].stAbScModifier,
-							characterid: character.id
-						})
-					} else {
-						createObj('attribute', {
-							name: "repeating_lore_" + rowID + "_lore_ability", 
-							current: 0,
-							characterid: character.id
-						})
-					}
-				    
+						createAttribute("repeating_lore_" + rowID + "_lore_ability", skills[i].stAbScModifier);	
+					};
 				};
 			};
 		//End Skills
@@ -425,28 +324,10 @@ on("chat:message",function(msg){
 				};
 				
 				if (!save) {
-					createObj('attribute', {
-						name: `saving_throws_${saveName}`, 
-						current: savingThrows[i].stNet,
-						characterid: character.id
-					})
-					createObj('attribute', {
-						name: `saving_throws_${saveName}_rank`,
-						current: saveRank, 
-						characterid: character.id
-					})
-					createObj('attribute', {
-						name: `saving_throws_${saveName}_proficiency_display`,
-						current: saveProfDisplay, 
-						characterid: character.id
-					})
-					if (savingThrows[i].stAbScModifier != undefined) {
-    					createObj('attribute', {
-    						name: `saving_throws_${saveName}_ability`, 
-    						current: savingThrows[i].stAbScModifier,
-    						characterid: character.id
-    					})
-					}
+					createAttribute(`saving_throws_${saveName}`, savingThrows[i].stNet);
+					createAttribute(`saving_throws_${saveName}_rank`, saveRank);
+					createAttribute(`saving_throws_${saveName}_proficiency_display`, saveProfDisplay);
+					createAttribute(`saving_throws_${saveName}_ability`, savingThrows[i].stAbScModifier);
 			    };
 			};
 		//End Saving Throws
@@ -461,11 +342,7 @@ on("chat:message",function(msg){
 			
 			for (i=0; i < languages.length; i++) {
 			    var rowID = generateRowID();
-				createObj ('attribute', {
-					name: "repeating_languages_" + rowID + "_language",
-					current: `${languages[i].name}`,
-					characterid: character.id
-				})
+				createAttribute("repeating_languages_" + rowID + "_language", `${languages[i].name}`);
 			};
 		//End Languages
 
@@ -510,15 +387,15 @@ on("chat:message",function(msg){
 			
 			var heritageFilter = toProperCase(herolabData.actors["actor.1"].gameValues.actRace);
 			var classFilter = getAttrByName(character.id, "class");
-			if (classFilter = "Liberator") {
+			if (classFilter == "Liberator") {
 			    classFilter = "Champion"
 			};
 			
-			if (classFilter = "Paladin") {
+			if (classFilter == "Paladin") {
 			    classFilter = "Champion"
 			};
 			
-			if (classFilter = "Redeemer") {
+			if (classFilter == "Redeemer") {
 			    classFilter = "Champion"
 			};
 
@@ -561,74 +438,45 @@ on("chat:message",function(msg){
 				};	
 				
 					//Feat Name
-				createObj('attribute', {
-					name: "repeating_feat-class_" + rowID + "_feat_class",
-					current: classFeats[i].name,
-					characterid: character.id
-				});
+				createAttribute("repeating_feat-class_" + rowID + "_feat_class", classFeats[i].name);
+
 					//Level Requirement
-				createObj('attribute', {
-					name: "repeating_feat-class_" + rowID + "_feat_class_level",
-					current: classFeats[i].reqLevelNet,
-					characterid: character.id
-				});
+				createAttribute("repeating_feat-class_" + rowID + "_feat_class_level", classFeats[i].reqLevelNet);
+
 					//Traits
-				createObj('attribute', {
-					name: "repeating_feat-class_" + rowID + "_feat_class_traits",
-					current: classFeats[i].Trait.replace(/trt/g,"").replace("cl",""),
-					characterid: character.id
-				});			
+				createAttribute("repeating_feat-class_" + rowID + "_feat_class_traits", classFeats[i].Trait.replace(/trt/g,"").replace("cl",""));
+		
 					//Description
-				createObj('attribute', {
-					name: "repeating_feat-class_" + rowID + "_feat_class_notes",
-					current: classFeats[i].description,
-					characterid: character.id
-				});		
+				createAttribute("repeating_feat-class_" + rowID + "_feat_class_notes", classFeats[i].description);
+	
 					//Benefits
-				createObj('attribute', {
-					name: "repeating_feat-class_" + rowID + "_feat_class_benefits",
-					current: classFeats[i].summary,
-					characterid: character.id
-				});					
+				if (classFeats[i].summary != undefined) {
+					createAttribute("repeating_feat-class_" + rowID + "_feat_class_benefits", classFeats[i].summary);
+				};
+			
 					//Trigger
 				if (classFeats[i].reTrigger != undefined) {
-				createObj('attribute', {
-						name: "repeating_feat-class_" + rowID + "_feat_class_trigger",
-						current: classFeats[i].reTrigger,
-						characterid: character.id
-					});	
+					createAttribute("repeating_feat-class_" + rowID + "_feat_class_trigger", classFeats[i].reTrigger);
 				};
+				
 					//Pre-req
 				if (classFeats[i].rePrerequisites != undefined) {
-				createObj('attribute', {
-						name: "repeating_feat-class_" + rowID + "_feat_class_prerequisites",
-						current: classFeats[i].rePrerequisites,
-						characterid: character.id
-					});	
+					createAttribute("repeating_feat-class_" + rowID + "_feat_class_prerequisites", classFeats[i].rePrerequisites);
 				};
+				
 					//Number of Actions
 				if (classFeats[i].Action != undefined) {
-				createObj('attribute', {
-						name: "repeating_feat-class_" + rowID + "_feat_class_action",
-						current: numberActions,
-						characterid: character.id
-					});	
+					createAttribute("repeating_feat-class_" + rowID + "_feat_class_action", classFeats[i].numberActions);
 				};
+
 					//Requirements
 				if (classFeats[i].reRequirements != undefined) {
-				createObj('attribute', {
-						name: "repeating_feat-class_" + rowID + "_feat_class_requirements",
-						current: classFeats[i].reRequirements,
-						characterid: character.id
-					});	
+					createAttribute("repeating_feat-class_" + rowID + "_feat_class_requirements", classFeats[i].reRequirements);
 				};
+				
 					//Special
 				if (classFeats[i].reSpecial != undefined) {
-				createObj('attribute', {
-						name: "repeating_feat-class_" + rowID + "_feat_class_special",
-						current: classFeats[i].reSpecial,
-						characterid: character.id
-					});	
+					createAttribute("repeating_feat-class_" + rowID + "_feat_class_special", classFeats[i].reSpecial);
 				};
 			};
 			//End Class Feats
@@ -665,74 +513,45 @@ on("chat:message",function(msg){
 				};	
 				
 					//Feat Name
-				createObj('attribute', {
-					name: "repeating_feat-ancestry_" + rowID + "_feat_ancestry",
-					current: heritageFeats[i].name,
-					characterid: character.id
-				});
+				createAttribute("repeating_feat-ancestry_" + rowID + "_feat_ancestry", heritageFeats[i].name);
+
 					//Level Requirement
-				createObj('attribute', {
-					name: "repeating_feat-ancestry_" + rowID + "_feat_ancestry_level",
-					current: heritageFeats[i].reqLevelNet,
-					characterid: character.id
-				});
+				createAttribute("repeating_feat-ancestry_" + rowID + "_feat_ancestry_level", heritageFeats[i].reqLevelNet);
+
 					//Traits
-				createObj('attribute', {
-					name: "repeating_feat-ancestry_" + rowID + "_feat_ancestry_traits",
-					current: heritageFeats[i].Trait.replace(/trt/g,"").replace("cl",""),
-					characterid: character.id
-				});			
+				createAttribute("repeating_feat-ancestry_" + rowID + "_feat_ancestry_traits", heritageFeats[i].Trait.replace(/trt/g,"").replace("cl",""));
+	
 					//Description
-				createObj('attribute', {
-					name: "repeating_feat-ancestry_" + rowID + "_feat_ancestry_notes",
-					current: heritageFeats[i].description,
-					characterid: character.id
-				});
+				createAttribute("repeating_feat-ancestry_" + rowID + "_feat_ancestry_notes", heritageFeats[i].description);
+
 					//Benefits
-				createObj('attribute', {
-					name: "repeating_feat-ancestry_" + rowID + "_feat_ancestry_benefits",
-					current: heritageFeats[i].summary,
-					characterid: character.id
-				});			
+				if (heritageFeats[i].summary != undefined) {
+					createAttribute("repeating_feat-ancestry_" + rowID + "_feat_ancestry_benefits", heritageFeats[i].summary);
+				};
+				
 					//Trigger
 				if (heritageFeats[i].reTrigger != undefined) {
-				createObj('attribute', {
-						name: "repeating_feat-ancestry_" + rowID + "_feat_ancestry_trigger",
-						current: heritageFeats[i].reTrigger,
-						characterid: character.id
-					});	
+					createAttribute("repeating_feat-ancestry_" + rowID + "_feat_ancestry_trigger", heritageFeats[i].reTrigger);
 				};
+				
 					//Pre-req
 				if (heritageFeats[i].rePrerequisites != undefined) {
-				createObj('attribute', {
-						name: "repeating_feat-ancestry_" + rowID + "_feat_ancestry_prerequisites",
-						current: heritageFeats[i].rePrerequisites,
-						characterid: character.id
-					});	
+					createAttribute("repeating_feat-ancestry_" + rowID + "_feat_ancestry_prerequisites", heritageFeats[i].rePrerequisites);
 				};
+				
 					//Number of Actions
 				if (heritageFeats[i].Action != undefined) {
-				createObj('attribute', {
-						name: "repeating_feat-ancestry_" + rowID + "_feat_ancestry_action",
-						current: numberActions,
-						characterid: character.id
-					});	
+					createAttribute("repeating_feat-ancestry_" + rowID + "_feat_ancestry_action", numberActions);
 				};
+				
 					//Requirements
 				if (heritageFeats[i].reRequirements != undefined) {
-				createObj('attribute', {
-						name: "repeating_feat-ancestry_" + rowID + "_feat_ancestry_requirements",
-						current: heritageFeats[i].reRequirements,
-						characterid: character.id
-					});	
+					createAttribute("repeating_feat-ancestry_" + rowID + "_feat_ancestry_requirements", heritageFeats[i].reRequirements);
 				};
+				
 					//Special
 				if (heritageFeats[i].reSpecial != undefined) {
-				createObj('attribute', {
-						name: "repeating_feat-ancestry_" + rowID + "_feat_ancestry_special",
-						current: heritageFeats[i].reSpecial,
-						characterid: character.id
-					});	
+					createAttribute("repeating_feat-ancestry_" + rowID + "_feat_ancestry_special", heritageFeats[i].reSpecial);
 				};
 			};			
 			//End Heritage Feats
@@ -771,78 +590,113 @@ on("chat:message",function(msg){
 				};	
 				
 					//Feat Name
-				createObj('attribute', {
-					name: "repeating_feat-general_" + rowID + "_feat_general",
-					current: otherFeats[i].name,
-					characterid: character.id
-				});
+				createAttribute("repeating_feat-general_" + rowID + "_feat_general", otherFeats[i].name);
+
 					//Level Requirement
-				createObj('attribute', {
-					name: "repeating_feat-general_" + rowID + "_feat_general_level",
-					current: otherFeats[i].reqLevelNet,
-					characterid: character.id
-				});
+				createAttribute("repeating_feat-general_" + rowID + "_feat_general_level", otherFeats[i].reqLevelNet);
+
 					//Traits
-				createObj('attribute', {
-					name: "repeating_feat-general_" + rowID + "_feat_general_traits",
-					current: otherFeats[i].Trait.replace(/trt/g,"").replace("cl",""),
-					characterid: character.id
-				});			
+				createAttribute("repeating_feat-general_" + rowID + "_feat_general_traits", otherFeats[i].Trait.replace(/trt/g,"").replace("cl",""));
+		
 					//Description
-				createObj('attribute', {
-					name: "repeating_feat-general_" + rowID + "_feat_general_notes",
-					current: otherFeats[i].description,
-					characterid: character.id
-				});
+				createAttribute("repeating_feat-general_" + rowID + "_feat_general_notes", otherFeats[i].description);
+
 					//Benefits
-				createObj('attribute', {
-					name: "repeating_feat-general_" + rowID + "_feat_general_benefits",
-					current: otherFeats[i].summary,
-					characterid: character.id
-				});			
+				if (otherFeats[i].summary != undefined) {	
+					createAttribute("repeating_feat-general_" + rowID + "_feat_general_benefits", otherFeats[i].summary);
+				};
+				
 					//Trigger
 				if (otherFeats[i].reTrigger != undefined) {
-				createObj('attribute', {
-						name: "repeating_feat-general_" + rowID + "_feat_general_trigger",
-						current: otherFeats[i].reTrigger,
-						characterid: character.id
-					});	
+					createAttribute("repeating_feat-general_" + rowID + "_feat_general_trigger", otherFeats[i].reTrigger);
 				};
+				
 					//Pre-req
 				if (otherFeats[i].rePrerequisites != undefined) {
-				createObj('attribute', {
-						name: "repeating_feat-general_" + rowID + "_feat_general_prerequisites",
-						current: otherFeats[i].rePrerequisites,
-						characterid: character.id
-					});	
+					createAttribute("repeating_feat-general_" + rowID + "_feat_general_prerequisites", otherFeats[i].rePrerequisites);
 				};
+
 					//Number of Actions
 				if (otherFeats[i].Action != undefined) {
-				createObj('attribute', {
-						name: "repeating_feat-general_" + rowID + "_feat_general_action",
-						current: numberActions,
-						characterid: character.id
-					});	
+					createAttribute("repeating_feat-general_" + rowID + "_feat_general_action", numberActions);
 				};
 					//Requirements
+				
 				if (otherFeats[i].reRequirements != undefined) {
-				createObj('attribute', {
-						name: "repeating_feat-general_" + rowID + "_feat_general_requirements",
-						current: otherFeats[i].reRequirements,
-						characterid: character.id
-					});	
+					createAttribute("repeating_feat-general_" + rowID + "_feat_general_requirements", otherFeats[i].reRequirements);	
 				};
 					//Special
+				
 				if (otherFeats[i].reSpecial != undefined) {
-				createObj('attribute', {
-						name: "repeating_feat-general_" + rowID + "_feat_general_special",
-						current: otherFeats[i].reSpecial,
-						characterid: character.id
-					});	
+					createAttribute("repeating_feat-general_" + rowID + "_feat_general_special", otherFeats[i].reSpecial);
 				};
 			};			
 			//End General Feats
 		//End Feats
+		
+		//Import Action/Abilities
+			var charAbilities = [];
+			
+			//Get Abilities
+        	Object.keys(herolabData.actors["actor.1"].items).forEach(function(k){
+				if (herolabData.actors["actor.1"].items[k].compset === "Ability") {
+					charAbilities.push(herolabData.actors["actor.1"].items[k])
+				}
+			});
+			
+			for (i=0; i < charAbilities.length; i++) {
+				var rowID = generateRowID();
+			
+					//Action Name
+				createAttribute("repeating_actions_" + rowID + "_name", charAbilities[i].name);
+				
+					//Description
+				createAttribute("repeating_actions_" + rowID + "_description", charAbilities[i].description);
+				
+					//Traits
+				if (charAbilities[i].Trait != undefined) {
+					createAttribute("repeating_actions_" + rowID + "_traits", charAbilities[i].Trait.replace(/trt/g,"").replace("cl",""));
+				};
+				
+					//Number of Actions
+				if (charAbilities[i].Action != undefined) {
+					switch (charAbilities[i].Action) {
+						case "Action1": numberActions = "1-action";
+							break;
+						case "Action2": numberActions = "2-action";
+							break;
+						case "Action3": numberActions = "3-action";
+							break;
+						case "Free": numberActions = "free_action";
+							break;
+						case "Reaction": numberActions = "reaction";
+							break;
+						case "Action1,Action2": numberActions = "1-to-2-actions";
+							break;
+						case "Action1,Action2,Action3": numberActions = "1-to-3-actions";
+							break;
+						default: numberActions = "other";
+									break;
+					};
+					createAttribute("repeating_actions_" + rowID + "_requirements", charAbilities[i].reRequirements);
+				};
+			
+					//Trigger
+				if (charAbilities[i].reTrigger != undefined) {
+					createAttribute("repeating_actions_" + rowID + "_trigger", charAbilities[i].reTrigger);
+				};
+				
+					//Requirements
+				if (charAbilities[i].reRequirements != undefined) {
+					createAttribute("repeating_actions_" + rowID + "_requirements", charAbilities[i].reRequirements);
+				};
+				
+					//Frequency
+				if (charAbilities[i].trkMaximum != undefined) {
+					createAttribute("repeating_actions_" + rowID + "_frequency", `${charAbilities[i].trkMaximum} per ${charAbilities[i].Period}`);
+				};
+			};
+		//End Action/Abilities
         	
 
 		

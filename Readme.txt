@@ -1,4 +1,4 @@
-//Version 1.0
+//Version 1.10
 
 What this script does (or should do correctly): 
 	Level 
@@ -13,6 +13,7 @@ What this script does (or should do correctly):
 	Skills and Lore
 	Saving Throws
 	Class Feats
+	Actions or Abilities on the character tab
 
 What this script does partially:
 	Ancestry and Heritage - Some heritages do not export correctly from HLO. This does not seem to be heritage specific as I have has Twilight Halfling export on one character but not another. If your heritage is not exported, this field is filled with just your ancestry (i.e. Halfling). 
@@ -25,7 +26,6 @@ What this script does not do yet (To do list):
 	Weapon attacks
 	Armor Class
 	Spell Attack and DC rolls
-	Actions or Abilities on the character tab
 	
 What this script cannot do (These aren't in the HLO Export file at all):
 	Perception	
