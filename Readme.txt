@@ -1,4 +1,4 @@
-//Version 1.10
+//Version 1.11
 
 What this script does (or should do correctly): 
 	Level 
@@ -13,7 +13,7 @@ What this script does (or should do correctly):
 	Skills and Lore
 	Saving Throws
 	Class Feats
-	Actions or Abilities on the character tab
+	New in version 1.10 - Actions or Abilities on the character tab
 
 What this script does partially:
 	Ancestry and Heritage - Some heritages do not export correctly from HLO. This does not seem to be heritage specific as I have has Twilight Halfling export on one character but not another. If your heritage is not exported, this field is filled with just your ancestry (i.e. Halfling). 
@@ -42,3 +42,5 @@ What this script won't do (most likely ever):
 Please make sure any errors or questions are submitted to https://app.roll20.net/forum/post/9630337/script-import-your-pathfinder-2e-herolab-online-character-into-roll20. That is where I will monitor the most. 
 
 Thanks!
+
+Update 1.11 - Some spelling and bug fixes. Nothing crazy

@@ -1,4 +1,4 @@
-//Version 1.00
+//Version 1.11
 //Initial Script for basic character attributes
 
 on("chat:message",function(msg){
