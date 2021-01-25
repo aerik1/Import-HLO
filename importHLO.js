@@ -99,8 +99,8 @@ on("chat:message",function(msg){
         	
         	    //Import Class
         	var classJob = findObjs({type: 'attribute', characterid: character.id, name: 'class'})[0];
-            str =  herolabData.actors["actor.1"].gameValues.actClassText;
-                vals = str.split(" ");
+            value =  herolabData.actors["actor.1"].gameValues.actClassText;
+                vals = value.split(" ");
                 if (vals.length > 1) {
                     value = vals[0];
                     }
