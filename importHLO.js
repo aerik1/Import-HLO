@@ -1,4 +1,4 @@
-//Version 1.11
+//Version 1.00
 //Initial Script for basic character attributes
 
 on("chat:message",function(msg){
@@ -231,10 +231,16 @@ on("chat:message",function(msg){
 							 break;
 				};	
 				
+				if (skills[i].stDC == 10) {
+				    var score = 0
+				} else {
+				    var score = skills[i].stNet
+				};
+				
 				if (!skills[i].name.includes("Lore")) {
 					if (!skillName) {
 						//Skill Name (i.e., acrobatics) and total bonus
-						createAttribute(skills[i].name, skills[i].stNet);
+						createAttribute(skills[i].name, score);
 							
 						//Ability modifier to skill
 						if (skills[i].stAbScModifier != undefined) {
@@ -242,10 +248,14 @@ on("chat:message",function(msg){
 						};
 
 						//Base bonus from proficiency: 0, 2, 4, 6, or 8
-						createAttribute(`${skills[i].name}_rank`, nameRank);
+						if (nameRank != undefined) {
+						createAttribute(`${skills[i].name}_rank`, nameRank)
+						};
 
 						//Proficiency Display: 0, T, E, M, or L 
-					    createAttribute(`${skills[i].name}_proficiency_display`, nameProfDisplay);
+						if (nameProfDisplay != undefined) {
+					    createAttribute(`${skills[i].name}_proficiency_display`, nameProfDisplay)
+					    };
 
 						//Proficiency plus level score
 						if (skills[i].proLevelBonNet != undefined) {
